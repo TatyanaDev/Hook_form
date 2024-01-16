@@ -1,156 +1,172 @@
-import { Form, Button, Select, Typography, DatePicker } from "antd";
-import { useState } from "react";
-import { v4 as id } from "uuid";
+import { Form, Button, Select, DatePicker, Input } from "antd";
+import { yupResolver } from "@hookform/resolvers/yup";
 import moment from "moment";
 import {
-  searchSelectValidation,
-  datePickerValidation,
-  onFinish,
-  onChangeDatePickerOne,
-  onChangeDatePickerTwo,
-  onChangeSearchSelect,
-  addStringArrayItem,
-} from "./helpers";
-import { stringArray } from "./StringArrayItem/types";
-import StringArrayItem from "./StringArrayItem";
+  Controller,
+  SubmitHandler,
+  useFieldArray,
+  useForm,
+} from "react-hook-form";
+import schema from "../../helper/schema";
+import FormData from "../../interface";
+import "./styles.css";
 
 export default function FormComponent() {
-  const [stringArray, setStringArray] = useState<stringArray[]>([
-    { id: id(), select: "", inputOne: "", inputTwo: "" },
-  ]);
-  const [validSearchSelect, setValidSearchSelect] = useState<boolean>(false);
-  const [validDatePickers, setValidDatePickers] = useState<boolean>(false);
-  const [validStringArray, setValidStringArray] = useState<boolean>(false);
-  const [secondDatePicker, setSecondDatePicker] = useState<string>("");
-  const [firstDatePicker, setFirstDatePicker] = useState<string>("");
-  const [searchSelect, setSearchSelect] = useState<string>("");
-  const [message, setMessage] = useState<boolean>(false);
-  const { Text } = Typography;
   const { Option } = Select;
+  const { Item } = Form;
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<FormData>({
+    resolver: yupResolver(schema),
+    mode: "onBlur",
+    defaultValues: { rows: [{ select: "", input1: "", input2: "" }] },
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "rows",
+  });
+
+  const onSubmit: SubmitHandler<FormData> = (data) => {
+    console.log(data);
+
+    alert("Success");
+
+    reset({
+      selectSearch: "",
+      startDate: undefined,
+      endDate: undefined,
+      rows: [{ select: "", input1: "", input2: "" }],
+    });
+  };
 
   return (
-    <>
-      {message && <Text type="success">Success</Text>}
-
-      <Form
-        initialValues={{ remember: true }}
-        onFinish={() =>
-          onFinish(
-            searchSelect,
-            setValidSearchSelect,
-            firstDatePicker,
-            secondDatePicker,
-            setValidDatePickers,
-            stringArray,
-            setValidStringArray,
-            setMessage,
-            setSearchSelect,
-            setFirstDatePicker,
-            setSecondDatePicker,
-            setStringArray
-          )
-        }
-        autoComplete="off"
-        style={{ maxWidth: 318 }}
-      >
-        <Select
-          showSearch
-          onChange={(value) => onChangeSearchSelect(value, setSearchSelect)}
-          onBlur={() =>
-            searchSelectValidation(searchSelect, setValidSearchSelect)
-          }
-          placeholder="Search to Select"
-          value={searchSelect}
-          style={{ display: "block" }}
-          filterOption={(input, option: any) =>
-            option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-          }
-          filterSort={(optionA, optionB) =>
-            optionA.children
-              .toLowerCase()
-              .localeCompare(optionB?.children?.toLowerCase())
-          }
+    <div>
+      <Form onFinish={handleSubmit(onSubmit)} className="form">
+        <Item
+          label="Select with Search"
+          validateStatus={errors.selectSearch && "error"}
+          help={errors.selectSearch?.message}
         >
-          <Option value="Not Identified">Not Identified</Option>
-          <Option value="Closed">Closed</Option>
-          <Option value="Communicated">Communicated</Option>
-          <Option value="Identified">Identified</Option>
-          <Option value="Resolved">Resolved</Option>
-          <Option value="Cancelled">Cancelled</Option>
-        </Select>
-        {validSearchSelect && (
-          <Text type="danger">The field must not be empty</Text>
-        )}
-
-        <DatePicker
-          onChange={(date, dateString) =>
-            onChangeDatePickerOne(date, dateString, setFirstDatePicker)
-          }
-          onBlur={() =>
-            datePickerValidation(
-              firstDatePicker,
-              secondDatePicker,
-              setValidDatePickers
-            )
-          }
-          name="firstDatePicker"
-          value={
-            firstDatePicker !== ""
-              ? moment(`${firstDatePicker}`, "YYYY/MM/DD")
-              : undefined
-          }
-        />
-
-        <DatePicker
-          onChange={(date, dateString) =>
-            onChangeDatePickerTwo(date, dateString, setSecondDatePicker)
-          }
-          onBlur={() =>
-            datePickerValidation(
-              firstDatePicker,
-              secondDatePicker,
-              setValidDatePickers
-            )
-          }
-          name="secondDatePicker"
-          value={
-            secondDatePicker !== ""
-              ? moment(`${secondDatePicker}`, "YYYY/MM/DD")
-              : undefined
-          }
-        />
-        {validDatePickers && (
-          <Text type="danger">At least one must be non-empty</Text>
-        )}
-
-        <Button
-          type="primary"
-          onClick={() => addStringArrayItem(setStringArray, stringArray)}
-          style={{ background: "green", borderColor: "green" }}
-        >
-          +
-        </Button>
-        {stringArray.map((obj) => (
-          <StringArrayItem
-            key={obj.id}
-            id={obj.id}
-            setStringArray={setStringArray}
-            stringArray={stringArray}
-            setValidStringArray={setValidStringArray}
+          <Controller
+            name="selectSearch"
+            control={control}
+            render={({ field }) => (
+              <Select
+                {...field}
+                showSearch
+                placeholder="Select a value"
+                onBlur={() => field.onBlur()}
+              >
+                <Option value="not-identified">Not Identified</Option>
+                <Option value="closed">Closed</Option>
+                <Option value="communicated">Communicated</Option>
+                <Option value="identified">Identified</Option>
+                <Option value="resolved">Resolved</Option>
+                <Option value="cancelled">Cancelled</Option>
+              </Select>
+            )}
           />
-        ))}
-        {validStringArray && (
-          <Text type="danger">
-            More than one line. One field must be filled
-          </Text>
-        )}
+        </Item>
 
-        <Form.Item>
-          <Button type="primary" htmlType="submit">
-            Submit
-          </Button>
-        </Form.Item>
+        <Item label="Start Date" validateStatus={errors.endDate && "error"}>
+          <Controller
+            name="startDate"
+            control={control}
+            render={({ field }) => (
+              <DatePicker
+                {...field}
+                format="YYYY-MM-DD"
+                value={field.value ? moment(field.value) : null}
+                onBlur={() => field.onBlur()}
+              />
+            )}
+          />
+        </Item>
+
+        <Item
+          label="End Date"
+          validateStatus={errors.endDate && "error"}
+          help={errors.endDate?.message}
+        >
+          <Controller
+            name="endDate"
+            control={control}
+            render={({ field }) => (
+              <DatePicker
+                {...field}
+                format="YYYY-MM-DD"
+                value={field.value ? moment(field.value) : null}
+                onBlur={() => field.onBlur()}
+              />
+            )}
+          />
+        </Item>
+
+        {fields.map((field, index) => (
+          <div key={field.id} className="containerString">
+            <Item
+              validateStatus={
+                errors.rows && errors.rows[index]?.select && "error"
+              }
+            >
+              <Controller
+                name={`rows.${index}.select`}
+                control={control}
+                render={({ field }) => (
+                  <Select {...field}>
+                    <Option value="not-identified">Not Identified</Option>
+                    <Option value="closed">Closed</Option>
+                    <Option value="communicated">Communicated</Option>
+                    <Option value="identified">Identified</Option>
+                    <Option value="resolved">Resolved</Option>
+                    <Option value="cancelled">Cancelled</Option>
+                  </Select>
+                )}
+              />
+            </Item>
+
+            <Item
+              validateStatus={
+                errors.rows && errors.rows[index]?.select && "error"
+              }
+            >
+              <Controller
+                name={`rows.${index}.input1`}
+                control={control}
+                render={({ field }) => <Input {...field} />}
+              />
+            </Item>
+
+            <Item
+              validateStatus={
+                errors.rows && errors.rows[index]?.select && "error"
+              }
+              help={errors.rows && errors.rows[index]?.select?.message}
+            >
+              <Controller
+                name={`rows.${index}.input2`}
+                control={control}
+                render={({ field }) => <Input {...field} />}
+              />
+            </Item>
+
+            <Button onClick={() => remove(index)}>Delete Row</Button>
+          </div>
+        ))}
+
+        <Button onClick={() => append({ select: "", input1: "", input2: "" })}>
+          Add Row
+        </Button>
+
+        <Button type="primary" htmlType="submit">
+          Submit
+        </Button>
       </Form>
-    </>
+    </div>
   );
 }

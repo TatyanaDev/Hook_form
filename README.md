@@ -1,20 +1,21 @@
-1. Создать форму, которая содержит следующие элементы:
-   ◦ Select с поиском
-   ▪ Поле не должно быть пустым и вызывать валидацию на event onBlur
+1. Create a form that contains the following elements:
+   ◦ Select with search
+   ▪ The field must not be empty and must trigger validation on event onBlur
 
-   ◦ Два DatePicker (не RangePicker)
-   ▪ Как минимум один не должен быть пустым
+   ◦ Two DatePickers (not RangePicker)
+   ▪ At least one must not be empty
 
-   ◦ Массив строк
-   ▪ Каждая строка содержит один select без поиска с заранее заданным значениями (любые 5-10 значений) и два input. Все поля не могут быть пустыми, если хотя бы одно поле заполнено или это первая строка
-   ▪ Валидацию на event onBlur
-   ▪ Строки можно добавлять и удалять
+   ◦ Array of strings
+   ▪ Each row contains one select without search with pre-defined values (any 5-10 values) and two inputs. One of the fields must be filled in
+   ▪ Validation on event onBlur
+   ▪ Rows can be added and deleted
 
-   ◦ Кнопка Submit
-   ▪ По нажатию должна выполняться валидация всех полей и если проходит успешно, то после этого вывести в консоле все значения полей и вывести сообщение “Success” любым способом
+   ◦ Submit button
+   ▪ When pressed, validation of all fields should be performed and if it is successful, then all field values should be displayed in the console and the message "Success" should be displayed in any way.
 
-2. Использовать компоненты Ant, react-hook-form + yup
-3. Расположение элементов, стили и т.д. не имеют значения. Основной упор должен быть сделан на логику и поведение элементов
+2. Use Ant components, react-hook-form + yup
+3. Location of elements, styles, etc. do not matter. The main focus should be on the logic and behavior of the elements
+
 
 # Getting Started with Create React App
 
