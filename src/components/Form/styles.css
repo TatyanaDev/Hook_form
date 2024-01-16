@@ -3,6 +3,7 @@
   padding: 30px !important;
   border-radius: 20px;
   background: white;
+  min-width: 330px;
 }
 
 .containerString {
