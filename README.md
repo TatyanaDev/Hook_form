@@ -2,13 +2,16 @@
    > Select with search
    - The field must not be empty and must trigger validation on event onBlur
 
+
    > Two DatePickers (not RangePicker)
    - At least one must not be empty
+
 
    > Array of strings
    - Each row contains one select without search with pre-defined values (any 5-10 values) and two inputs. One of the fields must be filled in
    - Validation on event onBlur
    - Rows can be added and deleted
+
 
    > Submit button
    - When pressed, validation of all fields should be performed and if it is successful, then all field values should be displayed in the console and the message "Success" should be displayed in any way.
